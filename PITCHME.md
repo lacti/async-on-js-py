@@ -10,10 +10,21 @@ Futures and promises originated in functional programming and related paradigms 
 @size[0.5em](https://en.wikipedia.org/wiki/Futures_and_promises)
 
 ---
-@title[Future]
+@title[Code stub]
 
-한글 테스트
-![test](images/test.mmd.png)
+```javascript
+class promise<T> {
+    get_future(): future<T>;
+    set_value(T);
+    set_exception(T);
+};
+class future<T> {
+    get(): T;
+    valid(): state;
+}
+```
+
+![Sequence](images/future_and_promise.mmd.png)
 
 ---
 @title[Promise]
