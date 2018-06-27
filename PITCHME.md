@@ -13,66 +13,247 @@ Futures and promises originated in functional programming and related paradigms 
 @title[Code stub]
 
 ```javascript
-class promise<T> {
-    get_future(): future<T>;
-    set_value(T);
-    set_exception(T);
+class Promise<T> {
+    getFture(): Future<T>;
+    setValue(T);
+    setException(T);
 };
-class future<T> {
+class Future<T> {
     get(): T;
     valid(): state;
 }
+
+// Make a promise for async job.
+const future: Future<{}> = requestAsync();
+
+// Get a result synchronously.
+const result = future.get();
 ```
 
-![Sequence](images/future_and_promise.mmd.png)
-
 ---
-@title[Promise]
+@title[Sequence diagram]
+![Sequence](images/future_and_promise.mmd.png)
 
 ---
 @title[Callback]
 
+When there was no `Promise`, we should give a `callback` to execute something after completed an async job.
+
+```javascript
+requestAsync(foo, bar, function () {
+  // do something.
+});
+```
+
 ---
 @title[Callback hell]
+
+Welcome to the callback hell.
+
+```javascript
+receiveRequest(handle, function () {
+    readFromCache(request.userId, function () {
+        readFromDatabase(request.orderId, function () {
+            // Make an order.
+            updateDatabase(order, function () {
+                // Update an user's account.
+                updateCache(user, function () {
+                    finalizeRequest(handle, function () {
+                        // Release all these resources.
+                    });
+                });
+            });
+        }); 
+    });
+});
+```
+
+And how can I put an exception handler into above codes?
 
 ---
 @title[Continuation passing style]
 
-~~Monad~~
+How about this style?
+
+```javascript
+receiveRequest(handle)
+    .then(function (context) { readFromCache(context.userId); })
+    .then(function (context) { readFromDatabase(context.orderId); })
+    .then(function (context) { updateDatabase(context.order); })
+    .then(function (context) { updateCache(context.user); })
+    .then(function (context) { finalizeRequest(context.handle); })
+    .catch(function (error) { /* handle an error */ });
+```
+
+At least depth is not deepened. But how can I do this?
 
 ---
-@title[In python]
+@title[Arrow function]
+
+But, wait a moment. We have the `arrow function`. Yes, as you know about it, it is the javascript story.
+
+```javascript
+receiveRequest(handle)
+    .then(context => readFromCache(context.userId))
+    .then(context => readFromDatabase(context.orderId))
+    .then(context => updateDatabase(context.order))
+    .then(context => updateCache(context.user))
+    .then(context => finalizeRequest(context.handle))
+    .catch(error => /* handle an error */);
+```
+
+Then, how?
+
+---
+@title[Promise]
+
+It is because `Promise`.
+
+```javascript
+const promise = new Promise((resolve, reject) => {
+    fantasticCallback(foo, (error, result) => {
+        if (error) {
+            reject(error);
+        } else {
+            resolve(result);
+        }
+    })
+});
+promise.then(result => {
+        // It will be called after this promise is resolved.
+    }).catch(error => {
+        // Of course, a promise can be broken by an error.
+    });
+```
+
+So, you can make a chain of promises like this. ~~Actually, it is similar with `monad`.~~
+
+![Promise-chain](images/promise_chain.mmd.png)
+
+---
+@title[The python story]
+
+In fact, the above example does not cover all asynchrony. This is mostly about IO, because its request and completion can be separated.
+
+So, python, hmm. ~~twisted..tornado..~~
+
+- [gevent](http://www.gevent.org/)?
+- [asyncio](https://docs.python.org/3/library/asyncio.html)?
+- [Async and await](https://www.python.org/dev/peps/pep-0492/)?
+
+Sadly, there is no `promise` like javascript because the internals between python and javascript is so different to process this asynchronous job.
+
+*To be honest, python does not have an event loop as its core.*
 
 ---
 @title[Please make me sync style]
 
+Anyway, both of *callback hell* and *promise chain* seem not to be easy than a synchronous logic. Is there a magic way to write an asynchronous function like synchronous function like this?
+
+```javascript
+try {
+    const request = magic receiveRequest(handle);
+    const user = magic readFromCache(request.userId);
+    const order = magic readFromDatabase(context.orderId);
+    magic updateDatabase(order);
+    magic updateCache(user);
+    magic finalizeRequest(handle);
+} catch (error) {
+    // handle this error.
+}
+```
+
 ---
 @title[async/await]
+
+The *magic* is `async` and `await`.
+
+```javascript
+(async () => {
+    try {
+        const request = await receiveRequest(handle);
+        const user = await readFromCache(request.userId);
+        const order = await readFromDatabase(context.orderId);
+        await updateDatabase(order);
+        await updateCache(user);
+        await finalizeRequest(handle);
+    } catch (error) {
+        // handle this error.
+    }
+})();
+```
+
+It is exactly same with *callback* or *promise-chain* logic. A javascript compiler, actually babel or tsc, will transpile this to be running asynchronously.
+
+Of course, you can use `await` keyword only in `async` function or `Promise` constructor.
+
+---
+@title[Async internal]
+
+Actually, it is a simple state machine.
+
+![State-machine-for-async](images/async_internal.mmd.png)
+
+- Compiler rewrites an async function `F` to a state machine function `F'`,
+- The state of `F'` will be changed when each step is completed by a completion callback.
+- Of course, there is an error `catch` will catch it.
+
+But if you think about it, would not it be okay to pause a function's execution flow to wait a callback? So, maybe, can we call this function to *resumeable function*?
 
 ---
 @title[Coroutine]
 
+Coroutines are computer-program components that generalize subroutines for non-preemptive multitasking, by allowing multiple entry points for suspending and resuming execution at certain locations. 
+
+@size[0.5em](https://en.wikipedia.org/wiki/Coroutine)
+
+But it seems to be difficult. Is there anything more easy one?
 
 ---
 @title[Generator]
 
----
-@title[Statemachine]
+A generator is a special routine that can be used to control the iteration behaviour of a loop. A generator yields the values one at a time, which requires less memory and allows the caller to get started processing the first few values immediately. In short, a generator looks like a function but behaves like an iterator.
+
+@size[0.5em](https://en.wikipedia.org/wiki/Generator_%28computer_programming%29)
+
+...`yield`?
 
 ---
-@title[Request & completion]
+@title[An example for generator]
+
+```javascript
+function* asyncJob() {
+    // Do something1
+    yield promise;
+    // Do something2
+    yield anotherPromise;
+    // Do something3
+}
+const iterator = asyncJob();
+const processHandle = iterator => {
+    const handle = iterator.next();
+    if (handle.done) return;
+    handle.then(() => processHandle(iterator));
+}
+processHandle(iterator);
+```
+
+So, we can reenter `asyncJob` function because it is a generator function.
 
 ---
-@title[Task]
+@title[Generator in python]
 
----
-@title[Task scheduler]
+Happily, python has `generator` too, but there is no `promise`. So we should solve the `promise` issue to use asynchronous function in python.
+
+**What differences can you make in javascript and not in python?**
 
 ---
 @title[Javascript eventloop]
 
+![javascript-eventloop](https://i.stack.imgur.com/BTm1H.png)
+
 ---
-@title[Python aiocore]
+@title[Python asyncio]
 
 ---
 @title[Performance?]
