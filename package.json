@@ -1,0 +1,22 @@
+{
+  "name": "async-on-js-py",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "image": "mmdc -i images/*.mmd"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lacti/async-on-js-py.git"
+  },
+  "author": "jaeyoung.choi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lacti/async-on-js-py/issues"
+  },
+  "homepage": "https://github.com/lacti/async-on-js-py#readme",
+  "devDependencies": {
+    "mermaid.cli": "^0.5.1"
+  }
+}
