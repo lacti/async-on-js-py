@@ -13,7 +13,7 @@ Futures and promises originated in functional programming and related paradigms 
 @title[Future]
 
 한글 테스트
-![test](images/test.mmd.svg)
+![test](images/test.png)
 
 ---
 @title[Promise]

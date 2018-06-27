@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "image": "mmdc -i images/*.mmd"
+    "image": "find images -name \"*.mmd\" -exec mmdc -i {} -o {}.png \\;"
   },
   "repository": {
     "type": "git",
