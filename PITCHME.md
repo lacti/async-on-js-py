@@ -5,7 +5,7 @@
 @title[Futures and promises]
 ## Futures and promises
 
-Futures and promises originated in functional programming and related paradigms (such as logic programming) to decouple a value (a future) from how it was computed (a promise).
+> Futures and promises originated in functional programming and related paradigms (such as logic programming) to decouple a value (a future) from how it was computed (a promise).
 
 @size[0.5em](https://en.wikipedia.org/wiki/Futures_and_promises)
 
@@ -14,18 +14,16 @@ Futures and promises originated in functional programming and related paradigms 
 
 ```javascript
 class Promise<T> {
-    getFture(): Future<T>;
-    setValue(T);
-    setException(T);
+  getFture(): Future<T>;
+  setValue(T);
+  setException(T);
 };
 class Future<T> {
-    get(): T;
-    valid(): state;
+  get(): T;
+  valid(): state;
 }
-
 // Make a promise for async job.
 const future: Future<{}> = requestAsync();
-
 // Get a result synchronously.
 const result = future.get();
 ```
@@ -37,7 +35,7 @@ const result = future.get();
 ---
 @title[Callback]
 
-When there was no `Promise`, we should give a `callback` to execute something after completed an async job.
+When there was no `Promise`, we should give a `callback` to run something after completion.
 
 ```javascript
 requestAsync(foo, bar, function () {
@@ -48,41 +46,43 @@ requestAsync(foo, bar, function () {
 ---
 @title[Callback hell]
 
-Welcome to the callback hell.
+**Welcome to the callback hell.**
 
 ```javascript
 receiveRequest(handle, function () {
-    readFromCache(request.userId, function () {
-        readFromDatabase(request.orderId, function () {
-            // Make an order.
-            updateDatabase(order, function () {
-                // Update an user's account.
-                updateCache(user, function () {
-                    finalizeRequest(handle, function () {
-                        // Release all these resources.
-                    });
-                });
-            });
-        }); 
-    });
+  readFromCache(request.userId, function () {
+    readFromDatabase(request.orderId, function () {
+      // Make an order.
+      updateDatabase(order, function () {
+        // Update an user's account.
+        updateCache(user, function () {
+          finalizeRequest(handle, function () {
+            // Release all these resources.
+          });
+        });
+      });
+    }); 
+  });
 });
 ```
 
-And how can I put an exception handler into above codes?
+And how can I put an error handler or if-statement?
 
 ---
 @title[Continuation passing style]
+
+#### Continuation passing style
 
 How about this style?
 
 ```javascript
 receiveRequest(handle)
-    .then(function (context) { readFromCache(context.userId); })
-    .then(function (context) { readFromDatabase(context.orderId); })
-    .then(function (context) { updateDatabase(context.order); })
-    .then(function (context) { updateCache(context.user); })
-    .then(function (context) { finalizeRequest(context.handle); })
-    .catch(function (error) { /* handle an error */ });
+  .then(function (context) { readFromCache(context.userId); })
+  .then(function (context) { readFromDatabase(context.orderId); })
+  .then(function (context) { updateDatabase(context.order); })
+  .then(function (context) { updateCache(context.user); })
+  .then(function (context) { finalizeRequest(context.handle); })
+  .catch(function (error) { /* handle an error */ });
 ```
 
 At least depth is not deepened. But how can I do this?
@@ -90,19 +90,21 @@ At least depth is not deepened. But how can I do this?
 ---
 @title[Arrow function]
 
-But, wait a moment. We have the `arrow function`. Yes, as you know about it, it is the javascript story.
+But, wait a moment.
+
+We have the *arrow function*. Yes, it is the javascript story.
 
 ```javascript
 receiveRequest(handle)
-    .then(context => readFromCache(context.userId))
-    .then(context => readFromDatabase(context.orderId))
-    .then(context => updateDatabase(context.order))
-    .then(context => updateCache(context.user))
-    .then(context => finalizeRequest(context.handle))
-    .catch(error => /* handle an error */);
+  .then(context => readFromCache(context.userId))
+  .then(context => readFromDatabase(context.orderId))
+  .then(context => updateDatabase(context.order))
+  .then(context => updateCache(context.user))
+  .then(context => finalizeRequest(context.handle))
+  .catch(error => /* handle an error */);
 ```
 
-Then, how?
+Anyway, then how?
 
 ---
 @title[Promise]
@@ -111,19 +113,16 @@ It is because `Promise`.
 
 ```javascript
 const promise = new Promise((resolve, reject) => {
-    fantasticCallback(foo, (error, result) => {
-        if (error) {
-            reject(error);
-        } else {
-            resolve(result);
-        }
-    })
+  fantasticCallback(foo, (error, result) => {
+    if (error) reject(error);
+    else resolve(result);
+  })
 });
 promise.then(result => {
-        // It will be called after this promise is resolved.
-    }).catch(error => {
-        // Of course, a promise can be broken by an error.
-    });
+    // It will be called after this promise is resolved.
+  }).catch(error => {
+    // Of course, a promise can be broken by an error.
+  });
 ```
 
 So, you can make a chain of promises like this. ~~Actually, it is similar with `monad`.~~
@@ -133,7 +132,7 @@ So, you can make a chain of promises like this. ~~Actually, it is similar with `
 ---
 @title[The python story]
 
-In fact, the above example does not cover all asynchrony. This is mostly about IO, because its request and completion can be separated.
+In fact, This is mostly about IO that request and completion can be separated.
 
 So, python, hmm. ~~twisted..tornado..~~
 
@@ -141,26 +140,26 @@ So, python, hmm. ~~twisted..tornado..~~
 - [asyncio](https://docs.python.org/3/library/asyncio.html)?
 - [Async and await](https://www.python.org/dev/peps/pep-0492/)?
 
-Sadly, there is no `promise` like javascript because the internals between python and javascript is so different to process this asynchronous job.
+Sadly, there is no `promise` like javascript because its internal is different.
 
-*To be honest, python does not have an event loop as its core.*
+*To be honest, python doesn't have event loop as its core.*
 
 ---
 @title[Please make me sync style]
 
-Anyway, both of *callback hell* and *promise chain* seem not to be easy than a synchronous logic. Is there a magic way to write an asynchronous function like synchronous function like this?
+Anyway, I think a synchronous way is more easy than asynchronous one.
+
+Is there a magic way to write it as synchronous style?
 
 ```javascript
 try {
-    const request = magic receiveRequest(handle);
-    const user = magic readFromCache(request.userId);
-    const order = magic readFromDatabase(context.orderId);
-    magic updateDatabase(order);
-    magic updateCache(user);
-    magic finalizeRequest(handle);
-} catch (error) {
-    // handle this error.
-}
+  const request = magic receiveRequest(handle);
+  const user = magic readFromCache(request.userId);
+  const order = magic readFromDatabase(context.orderId);
+  magic updateDatabase(order);
+  magic updateCache(user);
+  magic finalizeRequest(handle);
+} catch (error) { // handle this error. }
 ```
 
 ---
@@ -170,27 +169,25 @@ The *magic* is `async` and `await`.
 
 ```javascript
 (async () => {
-    try {
-        const request = await receiveRequest(handle);
-        const user = await readFromCache(request.userId);
-        const order = await readFromDatabase(context.orderId);
-        await updateDatabase(order);
-        await updateCache(user);
-        await finalizeRequest(handle);
-    } catch (error) {
-        // handle this error.
-    }
+  try {
+    const request = await receiveRequest(handle);
+    const user = await readFromCache(request.userId);
+    const order = await readFromDatabase(context.orderId);
+    await updateDatabase(order);
+    await updateCache(user);
+    await finalizeRequest(handle);
+  } catch (error) { // handle this error. }
 })();
 ```
 
-It is exactly same with *callback* or *promise-chain* logic. A javascript compiler, actually babel or tsc, will transpile this to be running asynchronously.
+@size[0.7em](It is exactly same with *callback* or *promise-chain* logic. A javascript compiler, actually babel or tsc, will transpile this to be running asynchronously.)
 
-Of course, you can use `await` keyword only in `async` function or `Promise` constructor.
+@size[0.7em](Of course, you can use `await` keyword only in `async` function or `Promise` constructor.)
 
 ---
 @title[Async internal]
 
-Actually, it is a simple state machine.
+It can be converted to a simple state machine.
 
 ![State-machine-for-async](images/async_internal.mmd.png)
 
@@ -198,23 +195,30 @@ Actually, it is a simple state machine.
 - The state of `F'` will be changed when each step is completed by a completion callback.
 - Of course, there is an error `catch` will catch it.
 
-But if you think about it, would not it be okay to pause a function's execution flow to wait a callback? So, maybe, can we call this function to *resumeable function*?
+---
+@title[Async internal #2]
+
+But if you think about it, would not it be okay to pause a function's execution flow to wait a callback?
+
+So, maybe, can we call this function to *resumeable function*?
 
 ---
 @title[Coroutine]
 
-Coroutines are computer-program components that generalize subroutines for non-preemptive multitasking, by allowing multiple entry points for suspending and resuming execution at certain locations. 
+> Coroutines are computer-program components that generalize subroutines for non-preemptive multitasking, by allowing multiple entry points for suspending and resuming execution at certain locations. 
 
 @size[0.5em](https://en.wikipedia.org/wiki/Coroutine)
 
-But it seems to be difficult. Is there anything more easy one?
+But it seems to be difficult.
+
+Is there anything more easy one?
 
 ---
 @title[Generator]
 
-A generator is a special routine that can be used to control the iteration behaviour of a loop. A generator yields the values one at a time, which requires less memory and allows the caller to get started processing the first few values immediately. In short, a generator looks like a function but behaves like an iterator.
+> A generator is a special routine that can be used to control the iteration behaviour of a loop. A generator yields the values one at a time, which requires less memory and allows the caller to get started processing the first few values immediately. In short, a generator looks like a function but behaves like an iterator.
 
-@size[0.5em](https://en.wikipedia.org/wiki/Generator_%28computer_programming%29)
+@size[0.5em](https://en.wikipedia.org/wiki/Generator_(computer_programming))
 
 ...`yield`?
 
@@ -223,44 +227,46 @@ A generator is a special routine that can be used to control the iteration behav
 
 ```javascript
 function* asyncJob() {
-    // Do something1
-    yield promise;
-    // Do something2
-    yield anotherPromise;
-    // Do something3
+  // Do something1
+  yield promise;
+  // Do something2
+  yield anotherPromise;
+  // Do something3
 }
 const iterator = asyncJob();
 const processHandle = iterator => {
-    const handle = iterator.next();
-    if (handle.done) return;
-    handle.then(() => processHandle(iterator));
+  const handle = iterator.next();
+  if (handle.done) return;
+  handle.then(() => processHandle(iterator));
 }
 processHandle(iterator);
 ```
 
-So, we can reenter `asyncJob` function because it is a generator function.
+So, we can re-enter *asyncJob* function because it is a *generator function*.
 
 ---
 @title[Generator in python]
 
-Happily, python has `generator` too, but there is no `promise`. So we should solve the `promise` issue to use asynchronous function in python.
+Happily, python has `generator` too, but there is no `promise`, so we should solve the `promise` issue to use asynchronous function in python.
 
 **What differences can you make in javascript and not in python?**
 
 ---
 @title[Javascript eventloop]
 
+#### EventLoop in javascript (nodejs)
+
 ![javascript-eventloop](images/nodejs_internal.mmd.png)
 
 ---
 @title[Python asyncio]
 
-But, python doesn't have the event loop internally. Then, how?
+But, python doesn't have the event loop internally.
 
 ```python
 async def foo():
-    # prepare
-    await bar()
+  # prepare
+  await bar()
 
 loop = asyncio.get_event_loop()
 future = foo()  # (1)
@@ -269,27 +275,27 @@ loop.run_until_complete(handle)  # (3)
 ```
 
 - We should create a loop explicitly.
-- *prepare* codes would not be executed until *(3)*.*
+- *prepare* codes would not be executed until *(3)*.
 
 ---
 @title[Javascript eventloop]
+
+#### EventLoop in python
 
 ![python-eventloop](images/python_internal.mmd.png)
 
 ---
 @title[Javascript vs Python]
 
-### Javascript (nodejs)
+- Javascript (nodejs)
+  - Based on EventLoop engine.
+  - Designed almost libraries to be asynchronous.
 
-- Based on EventLoop engine.
-- Designed almost libraries to be asynchronous.
-
-### Python
-
-- Supported async/await lately.
-- Few libraries supports `asyncio`
-- And often have their own future-promise.
-- Still use more multi-process architecture for performance.
+- Python
+  - Supported async/await lately.
+  - Few libraries supports `asyncio`
+  - And often have their own future-promise.
+  - Still use more multi-process architecture for performance.
 
 ---
 @title[Performance]
@@ -299,22 +305,24 @@ loop.run_until_complete(handle)  # (3)
 - Is it possible to handle a single thread sufficiently?
 - Are there any parts that are synchronously running in the middle?
 
-This is a story that is different from `distributed`, `parallel`. But `Promise.all` seems to be like `fork-join`.
+@color[gray](@size[0.7em](This is a story that is different from `distributed`, `parallel`. But `Promise.all` seems to be like `fork-join`.))
 
 ---
 @title[Concurrency issue]
 
-In spite of being a single thread, we must be careful of the ABA problem.
+In spite of being a single thread,  
+we must be careful of the ABA problem.
 
 ```javascript
-if (global.progress) { showErrorPopup(); return; }
-if ((await askToUser()) === false) { return; }
-
-// Is it really safe?
-doStuff();
+if (global.progress) {
+  showErrorPopup();
+  return;
+}
+if ((await askToUser()) === false) return;
+doStuff(); // Is it really safe?
 ```
 
-Before and after `await`, **the shared state** will be completely different.
+Before and after `await`, @color[red](**shared states** will be totally different.)
 
 ---
 @title[Practice]
