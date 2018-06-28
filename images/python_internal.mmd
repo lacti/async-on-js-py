@@ -1,15 +1,14 @@
 sequenceDiagram
-    EventLoop-->>EventLoop: Create
-
     User-->>Library: Request
-    Library-->>User: (maybe) Future
+    Library-->>User: Future
 
+    User-->>EventLoop: Create
     User-->>EventLoop: Register tasks and wait
 
-    loop Until all tasks are exhausted
+    loop For all tasks
         EventLoop-->>Library: Execute a task
 
-        loop Is funtion end?
+        loop Is end?
             activate Library
                 Library-->>EventLoop: await another future
                 EventLoop-->>Library: Notify a completion
