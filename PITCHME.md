@@ -1,9 +1,10 @@
 @title[Introduction]
-## Asynchronous programming on javascript and python.
+### Asynchronous programming on @color[blue](Javascript) and @color[red](Python).
 
 ---
 @title[Futures and promises]
-## Futures and promises
+
+#### Futures and promises
 
 > Futures and promises originated in functional programming and related paradigms (such as logic programming) to decouple a value (a future) from how it was computed (a promise).
 
@@ -12,16 +13,18 @@
 ---
 @title[Code stub]
 
+#### Simple stub for Future and Promise
+
 ```javascript
 class Promise<T> {
-  getFture(): Future<T>;
-  setValue(T);
-  setException(T);
+  getFuture(): Future<T>;
+  setValue(T | Error);
 };
 class Future<T> {
-  get(): T;
-  valid(): state;
+  getValue(): T;
+  getState(): FutureState;
 }
+
 // Make a promise for async job.
 const future: Future<{}> = requestAsync();
 // Get a result synchronously.
@@ -30,12 +33,16 @@ const result = future.get();
 
 ---
 @title[Sequence diagram]
+
+#### Simple sequence diagram
+
 ![Sequence](images/future_and_promise.mmd.png)
 
 ---
 @title[Callback]
 
-When there was no `Promise`, we should give a `callback` to run something after completion.
+When there was no `Promise`,  
+we should give a `callback` to run something after completion.
 
 ```javascript
 requestAsync(foo, bar, function () {
@@ -147,9 +154,9 @@ Sadly, there is no `promise` like javascript because its internal is different.
 ---
 @title[Please make me sync style]
 
-Anyway, I think a synchronous way is more easy than asynchronous one.
+I think a synchronous way is more easy than that.
 
-Is there a magic way to write it as synchronous style?
+Is there a magic way to write it as @color[blue](synchronous style)?
 
 ```javascript
 try {
@@ -180,7 +187,7 @@ The *magic* is `async` and `await`.
 })();
 ```
 
-@size[0.7em](It is exactly same with *callback* or *promise-chain* logic. A javascript compiler, actually babel or tsc, will transpile this to be running asynchronously.)
+@size[0.8em](It is exactly same with *callback* or *promise-chain* logic. A javascript compiler, actually babel or tsc, will transpile this to be running asynchronously.)
 
 @size[0.7em](Of course, you can use `await` keyword only in `async` function or `Promise` constructor.)
 
@@ -191,9 +198,9 @@ It can be converted to a simple state machine.
 
 ![State-machine-for-async](images/async_internal.mmd.png)
 
-- Compiler rewrites an async function `F` to a state machine function `F'`,
-- The state of `F'` will be changed when each step is completed by a completion callback.
-- Of course, there is an error `catch` will catch it.
+- Compiler rewrites async function `F` to state machine `F'`,
+- `F'`'s state will be changed when callback is called.
+- If there is an error, `catch` will catch it.
 
 ---
 @title[Async internal #2]
@@ -205,16 +212,18 @@ So, maybe, can we call this function to *resumeable function*?
 ---
 @title[Coroutine]
 
+#### Coroutine
+
 > Coroutines are computer-program components that generalize subroutines for non-preemptive multitasking, by allowing multiple entry points for suspending and resuming execution at certain locations. 
 
 @size[0.5em](https://en.wikipedia.org/wiki/Coroutine)
 
-But it seems to be difficult.
-
-Is there anything more easy one?
+But it seems to be difficult. Is there anything more easy one?
 
 ---
 @title[Generator]
+
+#### Generator
 
 > A generator is a special routine that can be used to control the iteration behaviour of a loop. A generator yields the values one at a time, which requires less memory and allows the caller to get started processing the first few values immediately. In short, a generator looks like a function but behaves like an iterator.
 
@@ -249,7 +258,7 @@ So, we can re-enter *asyncJob* function because it is a *generator function*.
 
 Happily, python has `generator` too, but there is no `promise`, so we should solve the `promise` issue to use asynchronous function in python.
 
-**What differences can you make in javascript and not in python?**
+**What differences can you make in @color[blue](javascript) and not in @color[red](python)?**
 
 ---
 @title[Javascript eventloop]

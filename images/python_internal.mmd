@@ -8,7 +8,6 @@ sequenceDiagram
     User-->>EventLoop: run_until_*
 
     loop Until all tasks are exhausted
-        EventLoop-->>EventLoop: Get a task
         EventLoop-->>Library: Execute a task
 
         loop Is funtion end?
