@@ -1,0 +1,20 @@
+sequenceDiagram
+    EventLoop-->>EventLoop: Create
+
+    User-->>Library: Request
+    Library-->>User: (maybe) Future
+
+    User-->>EventLoop: Register tasks
+    User-->>EventLoop: run_until_*
+
+    loop Until all tasks are exhausted
+        EventLoop-->>EventLoop: Get a task
+        EventLoop-->>Library: Execute a task
+
+        loop Is funtion end?
+            Library-->>Library: Run sync codes
+            Library-->>EventLoop: await another future
+
+            EventLoop-->>Library: Notify a completion
+        end
+    end

@@ -250,13 +250,73 @@ Happily, python has `generator` too, but there is no `promise`. So we should sol
 ---
 @title[Javascript eventloop]
 
-![javascript-eventloop](https://i.stack.imgur.com/BTm1H.png)
+![javascript-eventloop](images/nodejs_internal.mmd.png)
 
 ---
 @title[Python asyncio]
 
+But, python doesn't have the event loop internally. Then, how?
+
+```python
+async def foo():
+    # prepare
+    await bar()
+
+loop = asyncio.get_event_loop()
+future = foo()  # (1)
+handle = asyncio.wait([future])  # (2)
+loop.run_until_complete(handle)  # (3)
+```
+
+- We should create a loop explicitly.
+- *prepare* codes would not be executed until *(3)*.*
+
 ---
-@title[Performance?]
+@title[Javascript eventloop]
+
+![python-eventloop](images/python_internal.mmd.png)
+
+---
+@title[Javascript vs Python]
+
+### Javascript (nodejs)
+
+- Based on EventLoop engine.
+- Designed almost libraries to be asynchronous.
+
+### Python
+
+- Supported async/await lately.
+- Few libraries supports `asyncio`
+- And often have their own future-promise.
+- Still use more multi-process architecture for performance.
+
+---
+@title[Performance]
+
+- Is EventLoop fast enough?
+- Can a task run fast enough?
+- Is it possible to handle a single thread sufficiently?
+- Are there any parts that are synchronously running in the middle?
+
+This is a story that is different from `distributed`, `parallel`. But `Promise.all` seems to be like `fork-join`.
 
 ---
 @title[Concurrency issue]
+
+In spite of being a single thread, we must be careful of the ABA problem.
+
+```javascript
+if (global.progress) { showErrorPopup(); return; }
+if ((await askToUser()) === false) { return; }
+
+// Is it really safe?
+doStuff();
+```
+
+Before and after `await`, **the shared state** will be completely different.
+
+---
+@title[Practice]
+
+I recommend you to design a simple *worker-pool model* with a *task scheduler*. I think it will help you to understand these internals.
