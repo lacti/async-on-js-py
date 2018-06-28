@@ -211,7 +211,7 @@ It can be converted to a simple state machine.
 
 But if you think about it, would not it be okay to pause a function's execution flow to wait a callback?
 
-So, maybe, can we call this function to *resumeable function*? @fa[laugh-wink](wink)
+So, maybe, can we call this function to *resumeable function*?  @fa[laugh-wink]
 
 ---
 @title[Coroutine]
@@ -341,6 +341,6 @@ Before and after `await`,
 ---
 @title[Practice]
 
-I recommend you to design a simple *worker-pool model* with a *task scheduler*. I think it will help you to understand these internals.
+I recommend you to design a simple *worker-pool model* with a *task scheduler*.
 
-@fa[graduation-cap](study)
+I think it will help you to understand these internals. @fa[graduation-cap]
