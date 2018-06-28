@@ -225,7 +225,7 @@ But it seems to be difficult. Is there anything more easy one?
 
 #### Generator
 
-> A generator is a special routine that can be used to control the iteration behaviour of a loop. A generator yields the values one at a time, which requires less memory and allows the caller to get started processing the first few values immediately. In short, a generator looks like a function but behaves like an iterator.
+> A generator yields the values one at a time, which requires less memory and allows the caller to get started processing the first few values immediately. In short, a generator looks like a function but behaves like an iterator.
 
 @size[0.5em](https://en.wikipedia.org/wiki/Generator_(computer_programming))
 
@@ -304,7 +304,6 @@ loop.run_until_complete(handle)  # (3)
   - Supported async/await lately.
   - Few libraries supports `asyncio`
   - And often have their own future-promise.
-  - Still use more multi-process architecture for performance.
 
 ---
 @title[Performance]
@@ -331,7 +330,8 @@ if ((await askToUser()) === false) return;
 doStuff(); // Is it really safe?
 ```
 
-Before and after `await`, @color[red](**shared states** will be totally different.)
+Before and after `await`,  
+@color[red](**shared states** will be totally different.)
 
 ---
 @title[Practice]
