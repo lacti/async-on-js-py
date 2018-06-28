@@ -6,7 +6,7 @@
 
 #### Futures and promises
 
-> Futures and promises originated in functional programming and related paradigms (such as logic programming) to decouple a value (a future) from how it was computed (a promise).
+> Futures and promises originated in functional programming and related paradigms (eg. logic) to decouple @color[blue](a value (a future)) from how it was @color[red](computed (a promise)).
 
 @size[0.5em](https://en.wikipedia.org/wiki/Futures_and_promises)
 
@@ -41,7 +41,7 @@ const result = future.get();
 ---
 @title[Callback]
 
-When there was no `Promise`,  
+When there was **no `Promise`**,  
 we should give a `callback` to run something after completion.
 
 ```javascript
@@ -73,7 +73,7 @@ receiveRequest(handle, function () {
 });
 ```
 
-And how can I put an error handler or if-statement?
+And how can I put an *error handler* or *if-statement*?
 
 ---
 @title[Continuation passing style]
@@ -137,26 +137,30 @@ So, you can make a chain of promises like this. ~~Actually, it is similar with `
 ![Promise-chain](images/promise_chain.mmd.png)
 
 ---
+@title[Monad?]
+
+![We speak no monad](http://www.ouarzy.com/wp-content/uploads/2017/07/UH0Y2Ve.jpg)
+
+---
 @title[The python story]
 
 In fact, This is mostly about IO that request and completion can be separated.
 
 So, python, hmm. ~~twisted..tornado..~~
 
-- [gevent](http://www.gevent.org/)?
-- [asyncio](https://docs.python.org/3/library/asyncio.html)?
-- [Async and await](https://www.python.org/dev/peps/pep-0492/)?
+- [gevent](http://www.gevent.org/)? [asyncio](https://docs.python.org/3/library/asyncio.html)?
+- Or [Async and await](https://www.python.org/dev/peps/pep-0492/)?
 
-Sadly, there is no `promise` like javascript because its internal is different.
+There is no `promise` like js in py-native. ~~asyncio~~
 
 *To be honest, python doesn't have event loop as its core.*
 
 ---
 @title[Please make me sync style]
 
-I think a synchronous way is more easy than that.
+BTW, I think a synchronous way is more easy.
 
-Is there a magic way to write it as @color[blue](synchronous style)?
+Is there a magic way to write it as @color[blue](**synchronous style**)?
 
 ```javascript
 try {
@@ -189,7 +193,7 @@ The *magic* is `async` and `await`.
 
 @size[0.8em](It is exactly same with *callback* or *promise-chain* logic. A javascript compiler, actually babel or tsc, will transpile this to be running asynchronously.)
 
-@size[0.7em](You can use `await` keyword only in `async` function or `Promise` constructor.)
+@size[0.7em](*You can use `await` keyword only in `async` function or `Promise` constructor.*)
 
 ---
 @title[Async internal]
@@ -198,7 +202,7 @@ It can be converted to a simple state machine.
 
 ![State-machine-for-async](images/async_internal.mmd.png)
 
-- Compiler rewrites async function `F` to state machine `S`.
+- Compiler rewrites async function to state machine `S`.
 - `S`'s state will be changed when callback is called.
 - If there is an error, `catch` will catch it.
 
@@ -214,22 +218,22 @@ So, maybe, can we call this function to *resumeable function*?
 
 #### Coroutine
 
-> Coroutines are computer-program components that generalize subroutines for non-preemptive multitasking, by allowing multiple entry points for suspending and resuming execution at certain locations. 
+> Coroutines are generalize subroutines for non-preemptive multitasking, by allowing multiple entry points for suspending and resuming execution at certain locations. 
 
 @size[0.5em](https://en.wikipedia.org/wiki/Coroutine)
 
-But it seems to be difficult. Is there anything more easy one?
+@size[0.8em](But it seems to be difficult. Is there more **easy** one?)
 
 ---
 @title[Generator]
 
 #### Generator
 
-> A generator yields the values one at a time, which requires less memory and allows the caller to get started processing the first few values immediately. In short, a generator looks like a function but behaves like an iterator.
+> A generator yields the values one at a time, which allows the caller to get started processing the first few values immediately. In short, it looks like a function but behaves like an iterator.
 
-@size[0.5em](https://en.wikipedia.org/wiki/Generator_(computer_programming))
+@size[0.5em](https://en.wikipedia.org/wiki/Generator_%28computer_programming%29)
 
-...`yield`?
+@size[0.8em](...`yield`?)
 
 ---
 @title[An example for generator]
@@ -251,7 +255,8 @@ const processHandle = iterator => {
 processHandle(iterator);
 ```
 
-So, we can re-enter *asyncJob* function because it is a *generator function*.
+So, we can re-enter *asyncJob* function  
+because it is a *generator function*.
 
 ---
 @title[Generator in python]
