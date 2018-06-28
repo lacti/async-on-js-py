@@ -189,7 +189,7 @@ The *magic* is `async` and `await`.
 
 @size[0.8em](It is exactly same with *callback* or *promise-chain* logic. A javascript compiler, actually babel or tsc, will transpile this to be running asynchronously.)
 
-@size[0.7em](Of course, you can use `await` keyword only in `async` function or `Promise` constructor.)
+@size[0.7em](You can use `await` keyword only in `async` function or `Promise` constructor.)
 
 ---
 @title[Async internal]
@@ -198,8 +198,8 @@ It can be converted to a simple state machine.
 
 ![State-machine-for-async](images/async_internal.mmd.png)
 
-- Compiler rewrites async function `F` to state machine `F'`,
-- `F'`'s state will be changed when callback is called.
+- Compiler rewrites async function `F` to state machine `S`.
+- `S`'s state will be changed when callback is called.
 - If there is an error, `catch` will catch it.
 
 ---
