@@ -3,7 +3,6 @@ sequenceDiagram
 
     activate Library
     Library-->>Internal: Request
-    Internal-->>Library: Handle
     Library-->>User: Promise
     Library-->>EventLoop: RegisterCallback
     deactivate Library

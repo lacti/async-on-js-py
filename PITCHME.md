@@ -202,8 +202,8 @@ It can be converted to a simple state machine.
 
 ![State-machine-for-async](images/async_internal.mmd.png)
 
-- Compiler rewrites async function to state machine `S`.
-- `S`'s state will be changed when callback is called.
+- Compiler replaces async function as state machine.
+- A state will be changed when callback is called.
 - If there is an error, `catch` will catch it.
 
 ---

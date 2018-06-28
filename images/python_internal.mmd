@@ -4,16 +4,15 @@ sequenceDiagram
     User-->>Library: Request
     Library-->>User: (maybe) Future
 
-    User-->>EventLoop: Register tasks
-    User-->>EventLoop: run_until_*
+    User-->>EventLoop: Register tasks and wait
 
     loop Until all tasks are exhausted
         EventLoop-->>Library: Execute a task
 
         loop Is funtion end?
-            Library-->>Library: Run sync codes
-            Library-->>EventLoop: await another future
-
-            EventLoop-->>Library: Notify a completion
+            activate Library
+                Library-->>EventLoop: await another future
+                EventLoop-->>Library: Notify a completion
+            deactivate Library
         end
     end
