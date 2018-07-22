@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lacti/async-on-js-py.git"
+    "url": "git+https://github.com/v6x/async-on-js-py.git"
   },
   "author": "jaeyoung.choi",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/lacti/async-on-js-py/issues"
+    "url": "https://github.com/v6x/async-on-js-py/issues"
   },
-  "homepage": "https://github.com/lacti/async-on-js-py#readme",
+  "homepage": "https://github.com/v6x/async-on-js-py#readme",
   "devDependencies": {
     "mermaid.cli": "^0.5.1"
   }
